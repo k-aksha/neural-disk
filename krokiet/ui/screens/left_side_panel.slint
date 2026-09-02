@@ -1,0 +1,229 @@
+import { ListView, Palette } from "std-widgets.slint";
+import { ActiveTab } from "../globals/common.slint";
+import { ColorPalette } from "../globals/color_palette.slint";
+import { GuiState } from "../globals/gui_state.slint";
+import { Settings } from "../globals/settings.slint";
+import { Callabler } from "../globals/callabler.slint";
+import { FontSizes } from "../globals/fonts.slint";
+import { Metrics } from "../globals/metrics.slint";
+import { Translations } from "../globals/translations.slint";
+
+component IconTooltip inherits PopupWindow {
+    in property <string> tooltip_text;
+    close-policy: PopupClosePolicy.no-auto-close;
+    width: label.preferred-width + 2 * Metrics.spacing_s;
+    height: label.preferred-height + 2 * Metrics.spacing_xs;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: ColorPalette.popup_background;
+        border-color: ColorPalette.popup_border_color;
+        border-width: 1px;
+        border-radius: Metrics.corner_radius_small;
+
+        label := Text {
+            x: Metrics.spacing_s;
+            y: Metrics.spacing_xs;
+            text: root.tooltip_text;
+            font-size: FontSizes.small;
+        }
+    }
+}
+
+// A single sidebar entry: icon always visible, label shown only when the sidebar is expanded.
+// Selection is a full-row rounded highlight rather than a thin accent bar, matching the
+// Apple-HIG card style used elsewhere (SettingsCard, popups, ...).
+component SidebarRow inherits Rectangle {
+    in property <string> label_text;
+    in property <image> icon_source;
+    in property <bool> selected: false;
+    in property <angle> icon_rotation: 0deg;
+    callback triggered();
+
+    height: Metrics.row_height + 2 * Metrics.spacing_s;
+
+    // `accent-background`/`accent-foreground` are a matched pair guaranteed to be readable
+    // together (unlike using accent-background as a *text* color against an unrelated
+    // background, which was the previous, low-contrast approach here).
+    highlight := Rectangle {
+        x: Metrics.spacing_xs;
+        width: parent.width - 2 * Metrics.spacing_xs;
+        height: parent.height;
+        border-radius: Metrics.corner_radius_medium;
+        background: root.selected ? Palette.accent-background : (touch_area.has-hover ? ColorPalette.tab_hovered_color : transparent);
+        animate background {
+            duration: 100ms;
+            easing: ease;
+        }
+    }
+
+    // Absolute positioning (not a HorizontalLayout) so the icon and label are guaranteed to
+    // share the same vertical center regardless of how each element's natural size differs.
+    icon := Image {
+        x: Metrics.spacing_m;
+        y: (parent.height - self.height) / 2;
+        width: 20px;
+        height: 20px;
+        source: root.icon_source;
+        transform-rotation: root.icon_rotation;
+        colorize: root.selected ? Palette.accent-foreground : Palette.foreground;
+    }
+
+    if Settings.sidebar_expanded: Text {
+        x: icon.x + icon.width + Metrics.spacing_s;
+        y: 0;
+        width: parent.width - self.x - Metrics.spacing_m;
+        height: parent.height;
+        vertical-alignment: TextVerticalAlignment.center;
+        horizontal-alignment: TextHorizontalAlignment.left;
+        overflow: TextOverflow.elide;
+        text: root.label_text;
+        font-size: FontSizes.normal;
+        color: root.selected ? Palette.accent-foreground : Palette.foreground;
+    }
+
+    touch_area := TouchArea {
+        x: 0;
+        y: 0;
+        width: parent.width;
+        height: parent.height;
+        clicked => {
+            root.triggered();
+        }
+        changed has-hover => {
+            if (!Settings.sidebar_expanded) {
+                if (self.has-hover) {
+                    tooltip.show();
+                } else {
+                    tooltip.close();
+                }
+            }
+        }
+    }
+
+    // Redundant once the label is already visible, so only ever shown in the collapsed rail
+    // (guarded above in `changed has-hover`) - always instantiated so it's safe to reference.
+    tooltip := IconTooltip {
+        x: parent.width + Metrics.spacing_xs;
+        y: (parent.height - self.height) / 2;
+        tooltip_text: root.label_text;
+    }
+}
+
+export component LeftSidePanel inherits Rectangle {
+    callback changed_active_tab();
+
+    out property <length> expanded_width: 200px;
+
+    width: Settings.sidebar_expanded ? root.expanded_width : Metrics.sidebar_rail_width;
+    background: ColorPalette.sidebar_background;
+    animate width {
+        duration: 120ms;
+        easing: ease;
+    }
+
+    Rectangle {
+        x: parent.width - 1px;
+        width: 1px;
+        height: parent.height;
+        background: ColorPalette.separator_color;
+    }
+
+    pure function icon_for_tab(tab: ActiveTab) -> image {
+        if (tab == ActiveTab.DuplicateFiles) {
+            return @image-url("../../icons/neuraldisk_tool_duplicate_files.svg");
+        } else if (tab == ActiveTab.EmptyFolders) {
+            return @image-url("../../icons/neuraldisk_tool_empty_folders.svg");
+        } else if (tab == ActiveTab.BigFiles) {
+            return @image-url("../../icons/neuraldisk_tool_big_files.svg");
+        } else if (tab == ActiveTab.EmptyFiles) {
+            return @image-url("../../icons/neuraldisk_tool_empty_files.svg");
+        } else if (tab == ActiveTab.TemporaryFiles) {
+            return @image-url("../../icons/neuraldisk_tool_temporary_files.svg");
+        } else if (tab == ActiveTab.SimilarImages) {
+            return @image-url("../../icons/neuraldisk_tool_similar_images.svg");
+        } else if (tab == ActiveTab.SimilarVideos) {
+            return @image-url("../../icons/neuraldisk_tool_similar_videos.svg");
+        } else if (tab == ActiveTab.SimilarMusic) {
+            return @image-url("../../icons/neuraldisk_tool_music_duplicates.svg");
+        } else if (tab == ActiveTab.InvalidSymlinks) {
+            return @image-url("../../icons/neuraldisk_tool_invalid_symlinks.svg");
+        } else if (tab == ActiveTab.BrokenFiles) {
+            return @image-url("../../icons/neuraldisk_tool_broken_files.svg");
+        } else if (tab == ActiveTab.BadExtensions) {
+            return @image-url("../../icons/neuraldisk_tool_bad_extensions.svg");
+        } else if (tab == ActiveTab.BadNames) {
+            return @image-url("../../icons/neuraldisk_tool_bad_names.svg");
+        } else if (tab == ActiveTab.ExifRemover) {
+            return @image-url("../../icons/neuraldisk_tool_exif_remover.svg");
+        } else if (tab == ActiveTab.VideoOptimizer) {
+            return @image-url("../../icons/neuraldisk_tool_video_optimizer.svg");
+        } else {
+            // Settings/About never appear in the tools rail; unreachable in practice.
+            return @image-url("../../icons/neuraldisk_settings.svg");
+        }
+    }
+
+    VerticalLayout {
+        padding: Metrics.spacing_xs;
+        spacing: Metrics.spacing_xs;
+
+        ListView {
+            vertical-stretch: 1.0;
+            out property <length> element_size: Metrics.row_height + 2 * Metrics.spacing_s;
+            out property <[{name: string, tab: ActiveTab}]> tools_model <=> GuiState.tools_model;
+
+            for r[idx] in tools_model: SidebarRow {
+                height: parent.element_size;
+                label_text: r.name;
+                icon_source: root.icon_for_tab(r.tab);
+                selected: GuiState.active_tab == r.tab;
+                triggered => {
+                    if (GuiState.active_tab == r.tab) {
+                        return;
+                    }
+                    GuiState.active_tab = r.tab;
+                    Callabler.tab_changed();
+                    root.changed_active_tab();
+                }
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: ColorPalette.separator_color;
+        }
+
+        SidebarRow {
+            visible: GuiState.active_tab != ActiveTab.Settings;
+            label_text: Translations.settings_settings_text;
+            icon_source: @image-url("../../icons/neuraldisk_settings.svg");
+            selected: false;
+            triggered => {
+                GuiState.active_tab = ActiveTab.Settings;
+                Callabler.tab_changed();
+                root.changed_active_tab();
+            }
+        }
+
+        if GuiState.available_subsettings: SidebarRow {
+            label_text: Translations.subsettings_text;
+            icon_source: @image-url("../../icons/neuraldisk_subsettings.svg");
+            selected: GuiState.visible_tool_settings;
+            triggered => {
+                GuiState.visible_tool_settings = !GuiState.visible_tool_settings;
+            }
+        }
+
+        SidebarRow {
+            label_text: Settings.sidebar_expanded ? Translations.sidebar_collapse_text : Translations.sidebar_expand_text;
+            icon_source: @image-url("../../icons/neuraldisk_sidebar_toggle.svg");
+            icon_rotation: Settings.sidebar_expanded ? 0deg : 180deg;
+            selected: false;
+            triggered => {
+                Settings.sidebar_expanded = !Settings.sidebar_expanded;
+            }
+        }
+    }
+}

@@ -1,0 +1,58 @@
+# NeuralDisk CLI
+
+CLI frontend that allows you to use NeuralDisk from the terminal.
+
+## Requirements
+
+Precompiled binaries should work without any additional dependencies on Linux (Ubuntu 22.04+), Windows (10+), and macOS (10.15+).
+
+On Linux, it is even possible (with eyra) to avoid libc entirely and use a fully static Rust binary, but alternatively you can use musl for this task.
+
+If you want to use the similar videos tool, you need to install ffmpeg (runtime dependency).  
+If you want to use heif/libraw/libavif (build/runtime dependency), you need to install the required packages.
+
+- macOS: `brew install ffmpeg libraw libheif libavif dav1d` - [ffmpeg formula](https://formulae.brew.sh/formula/ffmpeg)
+- Linux: `sudo apt install ffmpeg libraw-dev libheif-dev libavif-dev libdav1d-dev`
+- Windows: `choco install ffmpeg` - or, if not working, download from [ffmpeg.org](https://ffmpeg.org/download.html#build-windows) and
+  unpack to the location with `neuraldisk_cli.exe`. `heif` and `libraw` features are very hard to set up on Windows and are not available in prebuild binaries(there are some unofficial builds, that enables this features)
+
+## Compilation
+
+To compile, you need to have Rust installed via [rustup](https://rustup.rs/). Then, build with:
+
+```shell
+cargo run --release --bin neuraldisk_cli
+```
+
+You can enable additional features with:
+
+```shell
+cargo run --release --bin neuraldisk_cli --features "heif,libraw,libavif"
+```
+
+## How to use
+
+The application includes concise help for each tool, which you can display by running:
+```
+neuraldisk_cli --help
+```
+You can also get detailed information about the parameters of a specific tool by running, for example:
+```
+neuraldisk_cli dup --help
+```
+
+
+Example usage:
+```shell
+neuraldisk_cli dup -d /home/rafal -e /home/rafal/Obrazy  -m 25 -x 7z rar IMAGE -s hash -f results.txt -D aeo
+neuraldisk_cli empty-folders -d /home/rafal/rr /home/gateway -f results.txt
+neuraldisk_cli big -d /home/rafal/ /home/piszczal -e /home/rafal/Roman -n 25 -x VIDEO -f results.txt
+neuraldisk_cli empty-files -d /home/rafal /home/szczekacz -e /home/rafal/Pulpit -R -f results.txt
+neuraldisk_cli temp -d /home/rafal/ -E */.git */tmp* *Pulpit -f results.txt -D
+neuraldisk_cli music -d /home/rafal -e /home/rafal/Pulpit -z "artist,year, ARTISTALBUM, ALBUM___tiTlE"  -f results.txt
+neuraldisk_cli symlinks -d /home/kicikici/ /home/szczek -e /home/kicikici/jestempsem -x jpg -f results.txt
+```
+
+## LICENSE
+
+MIT

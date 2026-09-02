@@ -1,0 +1,47 @@
+import { Palette } from "std-widgets.slint";
+import { ColorPalette } from "../globals/color_palette.slint";
+
+// A thin draggable divider that resizes `target_width` by the horizontal drag delta.
+// `grows_leftward` controls the sign: true when dragging the handle right should shrink
+// `target_width` (handle sits on the *left* edge of the panel it resizes), false when
+// dragging right should grow it (handle sits on the panel's *right* edge).
+export component ResizeHandle inherits Rectangle {
+    in-out property <length> target_width;
+    in property <length> resize_min_width: 150px;
+    in property <length> resize_max_width: 800px;
+    in property <bool> grows_leftward: false;
+
+    property <length> width_at_press;
+
+    width: 6px;
+
+    // Hairline by default; thickens visually only via the accent color swap on hover/drag,
+    // never by changing width, so the divider doesn't shift adjacent panels when interacted with.
+    Rectangle {
+        x: (parent.width - self.width) / 2;
+        width: 1px;
+        height: parent.height;
+        background: (touch_area.has-hover || touch_area.pressed) ? Palette.accent-background : ColorPalette.separator_color;
+        animate background {
+            duration: 100ms;
+            easing: ease;
+        }
+    }
+
+    touch_area := TouchArea {
+        mouse-cursor: MouseCursor.ew-resize;
+        pointer-event(event) => {
+            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                root.width_at_press = root.target_width;
+            }
+        }
+        moved => {
+            if (self.pressed) {
+                root.target_width = max(
+                    root.resize_min_width,
+                    min(root.resize_max_width, root.width_at_press + (root.grows_leftward ? -(self.mouse-x - self.pressed-x) : (self.mouse-x - self.pressed-x)))
+                );
+            }
+        }
+    }
+}

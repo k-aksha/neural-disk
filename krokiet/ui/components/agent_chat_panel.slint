@@ -1,0 +1,86 @@
+import { Button, LineEdit, ListView, Palette } from "std-widgets.slint";
+import { ColorPalette } from "../globals/color_palette.slint";
+import { Translations } from "../globals/translations.slint";
+import { FontSizes } from "../globals/fonts.slint";
+import { Metrics } from "../globals/metrics.slint";
+import { GuiState } from "../globals/gui_state.slint";
+import { Callabler } from "../globals/callabler.slint";
+
+export component AgentChatPanel inherits Rectangle {
+    background: ColorPalette.popup_background;
+    border-color: ColorPalette.popup_border_color;
+    border-width: 1px;
+
+    VerticalLayout {
+        Rectangle {
+            background: ColorPalette.popup_background_title_line;
+            HorizontalLayout {
+                padding-left: 10px;
+                Text {
+                    horizontal-stretch: 1.0;
+                    min-height: 30px;
+                    text <=> Translations.agent_chat_popup_title_text;
+                    vertical-alignment: center;
+                    font-size: FontSizes.normal;
+                }
+                Button {
+                    width: 30px;
+                    text: "x";
+                    clicked => {
+                        GuiState.agent_chat_visible = false;
+                    }
+                }
+            }
+        }
+
+        chat_list := ListView {
+            vertical-stretch: 1.0;
+            for message in GuiState.agent_chat_messages: HorizontalLayout {
+                padding: Metrics.spacing_s;
+                alignment: message.role == "user" ? LayoutAlignment.end : LayoutAlignment.start;
+                Rectangle {
+                    max-width: parent.width * 0.75;
+                    border-radius: Metrics.corner_radius_medium;
+                    background: message.role == "user" ? Palette.accent-background : ColorPalette.list_view_item_color;
+                    HorizontalLayout {
+                        padding: Metrics.spacing_s;
+                        Text {
+                            text: message.text;
+                            wrap: word-wrap;
+                            font-size: FontSizes.normal;
+                            color: message.role == "user" ? Palette.accent-foreground : Palette.foreground;
+                        }
+                    }
+                }
+            }
+        }
+
+        if GuiState.agent_chat_busy: Text {
+            text: "...";
+            font-size: FontSizes.normal;
+            horizontal-alignment: TextHorizontalAlignment.center;
+        }
+
+        HorizontalLayout {
+            padding: Metrics.spacing_m;
+            spacing: Metrics.spacing_xs;
+            chat_input := LineEdit {
+                horizontal-stretch: 1.0;
+                enabled: !GuiState.agent_chat_busy;
+                placeholder-text <=> Translations.agent_chat_input_placeholder_text;
+                accepted(text) => {
+                    Callabler.agent_send_message(text);
+                    self.text = "";
+                }
+            }
+            Button {
+                enabled: !GuiState.agent_chat_busy && chat_input.text != "";
+                text <=> Translations.agent_chat_send_button_text;
+                clicked => {
+                    Callabler.agent_send_message(chat_input.text);
+                    chat_input.text = "";
+                }
+            }
+        }
+    }
+}

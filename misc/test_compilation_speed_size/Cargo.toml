@@ -1,0 +1,17 @@
+[package]
+name = "test_compilation_speed_size"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+walkdir = "2.5.0"
+humansize = "2.1"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.142"
+strum = { version = "0.27.2", features = ["strum_macros"] }
+plotters = { version = "0.3.7", features = ["all_elements", "all_series"] }
+
+[profile.release]
+panic = "unwind"
+overflow-checks = true
+debug = true
