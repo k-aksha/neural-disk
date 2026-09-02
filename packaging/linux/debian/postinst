@@ -1,0 +1,44 @@
+#!/bin/sh
+# Ollama/model setup is optional and best-effort: it never fails the package
+# install (dpkg would abort the whole transaction on a non-zero exit here).
+set -e
+
+. /usr/share/debconf/confmodule
+
+INSTALL_OLLAMA=false
+PULL_MODEL=false
+
+case "$1" in
+    configure)
+        db_input high neuraldisk/install-ollama || true
+        db_go || true
+        db_get neuraldisk/install-ollama
+        INSTALL_OLLAMA="$RET"
+
+        if [ "$INSTALL_OLLAMA" = "true" ]; then
+            db_input high neuraldisk/pull-model || true
+            db_go || true
+            db_get neuraldisk/pull-model
+            PULL_MODEL="$RET"
+        fi
+        ;;
+esac
+
+# Close the debconf conversation before doing any actual (potentially slow)
+# work - debconf should only be used for the Q&A part.
+db_stop
+
+if [ "$INSTALL_OLLAMA" = "true" ] && ! command -v ollama >/dev/null 2>&1; then
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL https://ollama.com/install.sh | sh || \
+            echo "neuraldisk: Ollama install failed - install it manually from https://ollama.com" >&2
+    else
+        echo "neuraldisk: curl not found, cannot auto-install Ollama - see https://ollama.com" >&2
+    fi
+fi
+
+if [ "$PULL_MODEL" = "true" ] && command -v ollama >/dev/null 2>&1; then
+    nohup ollama pull llama3.1 >/var/log/neuraldisk-model-pull.log 2>&1 &
+fi
+
+exit 0

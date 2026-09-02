@@ -107,6 +107,13 @@ jobs:
           bash misc/pack_all_backends.sh mac_neuraldisk_all_backends_${{ env.ARCHNAME }} mac_neuraldisk_all_backends_${{ env.ARCHNAME }}.zip
           bash misc/pack_all_backends.sh mac_neuraldisk_heif_avif_all_backends_${{ env.ARCHNAME }} mac_neuraldisk_heif_avif_all_backends_${{ env.ARCHNAME }}.zip
 
+      - name: Build .pkg installer
+        run: |
+          VERSION=$(sed -n 's/^version = "\(.*\)"$/\1/p' neuraldisk_core/Cargo.toml | head -1)
+          echo "PKG_VERSION=$VERSION" >> $GITHUB_ENV
+          bash packaging/macos/build_pkg.sh "mac_neuraldisk_${{ env.ARCHNAME }}" "$VERSION" "$PWD"
+          mv "NeuralDisk-$VERSION.pkg" "NeuralDisk-$VERSION-${{ env.ARCHNAME }}.pkg"
+
       - name: Store MacOS
         uses: actions/upload-artifact@v6
         with:
@@ -124,6 +131,7 @@ jobs:
             mac_neuraldisk_skia_vulkan_heif_avif_${{ env.ARCHNAME }}
             mac_neuraldisk_skia_vulkan_${{ env.ARCHNAME }}
             mac_neuraldisk_femtovg_wgpu_${{ env.ARCHNAME }}
+            NeuralDisk-${{ env.PKG_VERSION }}-${{ env.ARCHNAME }}.pkg
 
       - name: Release
         if: ${{ github.ref == 'refs/heads/master' && vars.HAVE_PAT_REPOSITORY_TOKEN == '1' }}
@@ -143,4 +151,5 @@ jobs:
             mac_neuraldisk_skia_vulkan_heif_avif_${{ env.ARCHNAME }}
             mac_neuraldisk_skia_vulkan_${{ env.ARCHNAME }}
             mac_neuraldisk_femtovg_wgpu_${{ env.ARCHNAME }}
+            NeuralDisk-${{ env.PKG_VERSION }}-${{ env.ARCHNAME }}.pkg
           token: ${{ secrets.PAT_REPOSITORY }}

@@ -1,0 +1,17 @@
+Template: neuraldisk/install-ollama
+Type: boolean
+Default: false
+Description: Install Ollama for NeuralDisk's AI copilot?
+ NeuralDisk includes an optional AI copilot that talks to a local Ollama
+ server. Every other feature (all of the scanning tools) works fully
+ without it. If you agree, this will run Ollama's own official install
+ script (curl -fsSL https://ollama.com/install.sh | sh). You can always
+ install it yourself later from https://ollama.com instead.
+
+Template: neuraldisk/pull-model
+Type: boolean
+Default: false
+Description: Download the default AI model (llama3.1, about 4.7 GB)?
+ This will run in the background after the package finishes installing and
+ may take a while depending on your connection. You can always run
+ 'ollama pull llama3.1' yourself later instead.

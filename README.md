@@ -73,6 +73,34 @@ Each tool uses different technologies, so you can find instructions for each of 
 - [NeuralDisk Core](neuraldisk_core/README.md)</br>
 - [Cedinia (Android)](cedinia/README.md)</br>
 
+## Setting up the AI copilot (optional)
+
+The copilot panel in NeuralDisk (the Slint GUI) is entirely optional - every scanning tool works
+without it, and it's disabled by default. To use it, you need [Ollama](https://ollama.com) running
+locally and the `llama3.1` model pulled (both are NeuralDisk's defaults - configurable in Settings):
+
+```shell
+# 1. Install Ollama (see https://ollama.com/download for your OS), then:
+ollama pull llama3.1
+
+# 2. Start it (skip this if the Ollama app/service is already running):
+ollama serve
+```
+
+Then open NeuralDisk's Settings and enable the copilot. The installers below (macOS `.pkg`, Windows
+setup `.exe`, Linux `.deb`) offer to do both of these steps for you during installation - each asks
+before installing Ollama and before downloading the model (~4.7 GB), and neither step is required to
+use the rest of the app.
+
+## Installers
+
+Prebuilt installers are attached to the [releases page](https://github.com/k-aksha/neural-disk/releases)
+alongside the raw binaries: a `.pkg` for macOS, a `Setup.exe` for Windows, and a `.deb` for
+Debian/Ubuntu-based Linux. None of these are code-signed (no certificate is available for this
+fork), so your OS will likely warn about an unidentified/unknown publisher on first run - that's
+expected, not a sign of tampering. Source for all three lives under
+[`packaging/`](packaging/).
+
 ## Comparison to other tools
 
 In this comparison remember, that even if app have same features they may work different(e.g. one app may have more

@@ -1,0 +1,86 @@
+#!/bin/bash
+# Runs as root after pkgbuild copies NeuralDisk.app into /Applications.
+# Ollama/model setup is optional and best-effort: it never fails the install.
+set -u
+
+LOG_TAG="NeuralDisk installer"
+log() { echo "[$LOG_TAG] $*"; }
+
+# Find the currently logged-in console user so we can run GUI dialogs and
+# user-owned commands (Homebrew/ollama refuse to run as root) in their
+# session, not root's.
+CONSOLE_USER=$(stat -f%Su /dev/console 2>/dev/null || true)
+
+if [ -z "$CONSOLE_USER" ] || [ "$CONSOLE_USER" = "root" ] || [ "$CONSOLE_USER" = "loginwindow" ]; then
+    log "No active GUI console session detected (likely a non-interactive/automated install)."
+    log "Skipping the optional Ollama setup prompts. See https://ollama.com to add the AI copilot later."
+    exit 0
+fi
+
+CONSOLE_UID=$(id -u "$CONSOLE_USER" 2>/dev/null || true)
+if [ -z "$CONSOLE_UID" ]; then
+    log "Could not resolve a user id for '$CONSOLE_USER' - skipping optional Ollama setup."
+    exit 0
+fi
+
+# Runs a command as the console user, inside their GUI session (needed for
+# both `osascript` dialogs and for Homebrew/ollama, which both refuse to run
+# as root).
+run_as_console_user() {
+    launchctl asuser "$CONSOLE_UID" sudo -u "$CONSOLE_USER" "$@"
+}
+
+ask_yes_no() {
+    local prompt="$1"
+    local button
+    button=$(run_as_console_user osascript -e "display dialog \"$prompt\" buttons {\"No\", \"Yes\"} default button \"Yes\" with title \"NeuralDisk Setup\" with icon note" -e "button returned of result" 2>/dev/null) || return 1
+    [ "$button" = "Yes" ]
+}
+
+notify() {
+    run_as_console_user osascript -e "display dialog \"$1\" buttons {\"OK\"} default button \"OK\" with title \"NeuralDisk Setup\" with icon note" >/dev/null 2>&1 || true
+}
+
+HAVE_OLLAMA=0
+if run_as_console_user command -v ollama >/dev/null 2>&1; then
+    HAVE_OLLAMA=1
+fi
+
+if [ "$HAVE_OLLAMA" -eq 0 ]; then
+    if ask_yes_no "NeuralDisk's optional AI copilot needs a local Ollama server. Install Ollama now via Homebrew? (Scanning and every other feature works fine without it.)"; then
+        if ! run_as_console_user command -v brew >/dev/null 2>&1; then
+            if ask_yes_no "Homebrew (a package manager for macOS) is required to install Ollama this way and isn't installed. Install Homebrew now? This can take a few minutes."; then
+                BREW_INSTALL_SCRIPT="/tmp/neuraldisk-brew-install-$$.sh"
+                if curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$BREW_INSTALL_SCRIPT"; then
+                    chown "$CONSOLE_USER" "$BREW_INSTALL_SCRIPT"
+                    chmod +x "$BREW_INSTALL_SCRIPT"
+                    # NONINTERACTIVE=1 so Homebrew's installer doesn't wait on a
+                    # [RETURN]-to-continue prompt - postinstall has no TTY.
+                    run_as_console_user env NONINTERACTIVE=1 /bin/bash "$BREW_INSTALL_SCRIPT" </dev/null || true
+                    rm -f "$BREW_INSTALL_SCRIPT"
+                fi
+            fi
+        fi
+        if run_as_console_user command -v brew >/dev/null 2>&1; then
+            if run_as_console_user brew install ollama; then
+                run_as_console_user brew services start ollama || true
+                HAVE_OLLAMA=1
+            else
+                notify "Installing Ollama via Homebrew failed. You can install it manually from https://ollama.com at any time."
+            fi
+        else
+            notify "Homebrew isn't available, so Ollama wasn't installed. You can install it manually from https://ollama.com at any time."
+        fi
+    else
+        notify "No problem - NeuralDisk works fully without it. Install Ollama later from https://ollama.com to enable the AI copilot."
+    fi
+fi
+
+if [ "$HAVE_OLLAMA" -eq 1 ]; then
+    if ask_yes_no "Download the default AI model (llama3.1, about 4.7 GB)? This can take a while depending on your connection - it will continue in a Terminal window after you click Yes."; then
+        run_as_console_user osascript -e 'tell application "Terminal" to do script "ollama pull llama3.1"' >/dev/null 2>&1 || \
+            notify "Could not open Terminal automatically. Run 'ollama pull llama3.1' yourself whenever you're ready."
+    fi
+fi
+
+exit 0

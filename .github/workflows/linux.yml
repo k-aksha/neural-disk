@@ -115,6 +115,50 @@ jobs:
             linux_neuraldisk_all_backends_${{ env.ARCHNAME }}.zip
           token: ${{ secrets.PAT_REPOSITORY }}
 
+  linux-deb:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-22.04-arm]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup env
+        run: |
+          ARCHNAME=$([ "${{ runner.arch }}" = "ARM64" ] && echo arm64 || echo x86_64)
+          echo "ARCHNAME=$ARCHNAME" >> $GITHUB_ENV
+
+      - name: Install basic libraries
+        run: sudo apt update || true; sudo apt install libheif-dev libraw-dev ffmpeg libgtk-4-dev -y
+
+      - name: Setup rust version
+        run: rustup default 1.94.1
+
+      - name: Install cargo-deb
+        run: cargo install cargo-deb --locked
+
+      - name: Build .deb
+        run: |
+          cargo deb -p neuraldisk
+          mv target/debian/*.deb neuraldisk_${{ env.ARCHNAME }}.deb
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: neuraldisk-deb-${{ runner.arch }}-${{ github.sha }}
+          path: |
+            neuraldisk_${{ env.ARCHNAME }}.deb
+
+      - name: Release
+        if: ${{ github.ref == 'refs/heads/master' && vars.HAVE_PAT_REPOSITORY_TOKEN == '1' }}
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: "Nightly"
+          files: |
+            neuraldisk_${{ env.ARCHNAME }}.deb
+          token: ${{ secrets.PAT_REPOSITORY }}
+
   # Some dependencies requires ubuntu 24.04
   linux-all-extra:
     runs-on: ${{ matrix.os }}

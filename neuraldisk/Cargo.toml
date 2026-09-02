@@ -85,3 +85,28 @@ xdg_portal_trash = ["neuraldisk_core/xdg_portal_trash"]
 
 [lints]
 workspace = true
+
+# Debian package, built via `cargo deb -p neuraldisk` (cargo-deb). The Ollama
+# setup prompts live in packaging/linux/debian/{templates,postinst} (debconf,
+# not a raw TTY prompt - required by Debian policy and correctly no-ops under
+# unattended/non-interactive installs instead of hanging).
+[package.metadata.deb]
+name = "neuraldisk"
+maintainer = "NeuralDisk <https://github.com/k-aksha/neural-disk>"
+copyright = "2020-2026, Rafał Mikrut and NeuralDisk contributors"
+license-file = ["LICENSE_GPL_APP", "0"]
+extended-description = """\
+NeuralDisk is a simple, multiplatform, fast, and free app to remove \
+unnecessary files from your computer, with an optional AI copilot (backed by \
+a locally-run Ollama server) that can drive the cleanup for you, one \
+confirmed action at a time."""
+depends = "$auto"
+section = "utils"
+priority = "optional"
+maintainer-scripts = "../packaging/linux/debian"
+assets = [
+    ["target/release/neuraldisk", "usr/bin/", "755"],
+    ["../data/io.neuraldisk.neuraldisk.desktop", "usr/share/applications/io.neuraldisk.neuraldisk.desktop", "644"],
+    ["../data/io.neuraldisk.neuraldisk.metainfo.xml", "usr/share/metainfo/io.neuraldisk.neuraldisk.metainfo.xml", "644"],
+    ["../data/icons/io.neuraldisk.neuraldisk.svg", "usr/share/icons/hicolor/scalable/apps/io.neuraldisk.neuraldisk.svg", "644"],
+]

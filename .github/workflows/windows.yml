@@ -146,6 +146,49 @@ jobs:
             windows_neuraldisk_on_windows_femtovg_wgpu.exe
           token: ${{ secrets.PAT_REPOSITORY }}
 
+  windows-installer:
+    needs: neuraldisk-compiled-on-windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download NeuralDisk (all backends) artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: neuraldisk-windows-on-windows-${{ github.sha }}
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Get version
+        run: |
+          $version = (Select-String -Path neuraldisk_core\Cargo.toml -Pattern '^version = "(.*)"$' | Select-Object -First 1).Matches.Groups[1].Value
+          echo "PKG_VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Build installer
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" `
+            "/DMyAppVersion=${{ env.PKG_VERSION }}" `
+            "/DMyAppBinary=windows_neuraldisk_on_windows_all_backends.exe" `
+            packaging\windows\neuraldisk.iss
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: neuraldisk-windows-installer-${{ github.sha }}
+          path: |
+            Output\NeuralDisk-Setup-${{ env.PKG_VERSION }}.exe
+          if-no-files-found: error
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: ${{ github.ref == 'refs/heads/master' && vars.HAVE_PAT_REPOSITORY_TOKEN == '1' }}
+        with:
+          tag_name: "Nightly"
+          files: |
+            Output\NeuralDisk-Setup-${{ env.PKG_VERSION }}.exe
+          token: ${{ secrets.PAT_REPOSITORY }}
+
   container_4_12:
     needs: neuraldisk-compiled-on-windows
     runs-on: ubuntu-latest
