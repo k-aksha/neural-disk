@@ -68,7 +68,7 @@ def main() -> None:
 
     if len(sys.argv) < 2:
         print("Usage: python find_unused_settings_properties.py <folder>")
-        print("  Example: python find_unused_settings_properties.py krokiet")
+        print("  Example: python find_unused_settings_properties.py neuraldisk")
         print("  Example: python find_unused_settings_properties.py cedinia")
         sys.exit(1)
 

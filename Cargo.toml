@@ -1,10 +1,10 @@
 [workspace]
 members = [
-    "czkawka_core",
-    "czkawka_cli",
-    "czkawka_gui",
+    "neuraldisk_core",
+    "neuraldisk_cli",
+    "neuraldisk_gui",
     "cedinia",
-    "krokiet",
+    "neuraldisk",
 ]
 exclude = [
     "misc/test_read_perf",
@@ -28,8 +28,8 @@ resolver = "3"
 
 [profile.release]
 # panic = "unwind" in opposite to "abort", allows to catch panic!()
-# Since Czkawka parse different types of files with few libraries, it is possible
-# that some files will cause crash, so at this moment I don't recommend to use "abort"
+# Since NeuralDisk parses different types of files with few libraries, it is possible
+# that some files will cause crash, so at this moment we don't recommend using "abort"
 # until you are ready to occasional crashes
 panic = "unwind"
 

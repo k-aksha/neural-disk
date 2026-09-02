@@ -10,11 +10,10 @@ The name refers to the Battle of Cedynia in 972, a victory that was significant 
 
 ## Installation
 
-The easiest way to install it (at least for now) is to download the latest release APK from the releases page: https://github.com/qarmin/czkawka/releases
+Check this repository's [releases page](https://github.com/k-aksha/neural-disk/releases) for the latest release APK.
 
-Alternatively, you can download the latest nightly build here: https://github.com/qarmin/czkawka/releases/download/Nightly/cedinia.apk
-
-There is currently no distribution via F-Droid, Google Play Store, or any other app store, but I am open to suggestions and contributions in this area.
+There is currently no distribution via F-Droid, Google Play Store, or any other app store;
+suggestions and contributions in this area are welcome.
 
 Other OS support, such as iOS, is not planned at this time (although it is likely possible to port it manually)
 
@@ -29,7 +28,9 @@ The build process is relatively complex and documentation is limited. You can re
 
 ## AI usage
 
-Because this project touches parts of Android I am not deeply familiar with, I used AI assistance during development, mainly for the bridge code between this application and Android via `jni-rs`. The code was carefully tested.
+This project touches parts of Android that are less commonly worked on directly in Rust, so AI
+assistance was used during development, mainly for the bridge code between this application and
+Android via `jni-rs`. The code was carefully tested.
 
 ## License
 

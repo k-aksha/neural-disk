@@ -9,28 +9,28 @@ Type=Application
 
 Name=NeuralDisk Gui
 
-Name[it]=Singhiozzo
-Name[pt_BR]=Comparador de Arquivos Duplicados Czkawka
-Name[pl]=Czkawka
-Name[de]=Czkawka
-Name[fr]=Czkawka
-Name[es]=Czkawka
-Name[ru]=Czkawka
-Name[uk]=Czkawka
-Name[cs]=Czkawka
-Name[sk]=Czkawka
-Name[nl]=Czkawka
-Name[sv]=Czkawka
-Name[no]=Czkawka
-Name[fi]=Czkawka
-Name[da]=Czkawka
-Name[tr]=Czkawka
-Name[ja]=Czkawka
-Name[ko]=Czkawka
-Name[zh_CN]=Czkawka
-Name[zh_TW]=Czkawka
-Name[ar]=Czkawka
-Name[hi]=Czkawka
+Name[it]=NeuralDisk Gui
+Name[pt_BR]=Comparador de Arquivos Duplicados NeuralDisk
+Name[pl]=NeuralDisk Gui
+Name[de]=NeuralDisk Gui
+Name[fr]=NeuralDisk Gui
+Name[es]=NeuralDisk Gui
+Name[ru]=NeuralDisk Gui
+Name[uk]=NeuralDisk Gui
+Name[cs]=NeuralDisk Gui
+Name[sk]=NeuralDisk Gui
+Name[nl]=NeuralDisk Gui
+Name[sv]=NeuralDisk Gui
+Name[no]=NeuralDisk Gui
+Name[fi]=NeuralDisk Gui
+Name[da]=NeuralDisk Gui
+Name[tr]=NeuralDisk Gui
+Name[ja]=NeuralDisk Gui
+Name[ko]=NeuralDisk Gui
+Name[zh_CN]=NeuralDisk Gui
+Name[zh_TW]=NeuralDisk Gui
+Name[ar]=NeuralDisk Gui
+Name[hi]=NeuralDisk Gui
 
 Comment=Multi functional app to clean OS which allow to find duplicates, empty folders, similar files etc.
 
@@ -59,7 +59,7 @@ Comment[hi]=सिस्टम को साफ करने और डुप्
 
 Keywords=NeuralDisk;duplicate;same;similar;cleaner;copy;copies;compare;files;
 
-Keywords[pl]=czkawka;duplikaty;podobne;kopie;czyszczenie;pliki;
+Keywords[pl]=neuraldisk;duplikaty;podobne;kopie;czyszczenie;pliki;
 Keywords[de]=duplikate;ähnlich;kopien;reinigen;dateien;
 Keywords[fr]=doublons;similaires;copies;nettoyage;fichiers;
 Keywords[es]=duplicados;similares;copias;limpieza;archivos;

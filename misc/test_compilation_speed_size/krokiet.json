@@ -1,8 +1,8 @@
 {
   "project": {
-    "name": "krokiet",
-    "path_to_main_rs_file": "krokiet/src/main.rs",
-    "path_to_clean_with_git": "krokiet"
+    "name": "neuraldisk",
+    "path_to_main_rs_file": "neuraldisk/src/main.rs",
+    "path_to_clean_with_git": "neuraldisk"
   },
   "build_config": [
     {

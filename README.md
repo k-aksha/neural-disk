@@ -1,15 +1,36 @@
 <div align="center"><img src="https://github.com/user-attachments/assets/f5e4b290-d001-4cf4-9f52-dab65a30e441" alt="neuraldisk_logo" width="600" /></div>
-     
-**NeuralDisk** ((IPA: [ˈkrɔcɛt]), "croquette" in Polish) new generation GUI frontend, simple, multiplatform, fast and free app to remove unnecessary files from your computer.
 
+**NeuralDisk** is a simple, multiplatform, fast, and free app to remove unnecessary files from your computer - with an
+optional AI copilot that can drive the cleanup for you, one confirmed action at a time.
 
-<div align="center"><img src="https://user-images.githubusercontent.com/41945903/102616149-66490400-4137-11eb-9cd6-813b2b070834.png" alt="neuraldisk_gui_logo" width="600" /></div>
+## Where this comes from
 
-**NeuralDisk Gui** (_tch•kav•ka_ (IPA: [ˈʧ̑kafka]), "hiccup" in Polish) older gtk4 GUI frontend, superseded by NeuralDisk. **Version 12.0 is the last released version** - no new binaries will be provided. New users and existing users are encouraged to switch to NeuralDisk.
+NeuralDisk is a fork and continuation of [**Czkawka**](https://github.com/qarmin/czkawka), the excellent
+duplicate-file-finder and disk-cleanup toolkit created and maintained by **Rafał Mikrut ("qarmin")**. Everything in
+this repository - the scanning engine, every tool listed below, the original GUI/CLI frontends, and years of careful
+engineering - is built on that project's work. If you're looking for the original, actively-maintained upstream
+project (with its own releases, community, and roadmap), that's the place to go: **https://github.com/qarmin/czkawka**.
 
-<div align="center"><img src="https://github.com/user-attachments/assets/ed6dfeea-a984-49e8-a621-8d6ae521c760" alt="cedinia_logo" width="600" /></div>
+This fork keeps the GPL-3.0/MIT/CC-BY-4.0 licensing exactly as upstream, and the original copyright notices remain in
+the LICENSE files. NeuralDisk is an independent continuation, not an official Czkawka release, and upstream is not
+involved in maintaining it.
 
-**Cedinia** - Android touch friendly GUI frontend for NeuralDisk Core, built with Slint.
+## What's new in NeuralDisk
+
+Starting from that foundation, this fork adds:
+
+- **An AI copilot panel** in the primary desktop GUI - a chat assistant (backed by a locally-run [Ollama](https://ollama.com)
+  server, so nothing leaves your machine) that can run any of the scanners below and propose file actions
+  (delete/trash/move/rename/hardlink/symlink/etc.) in natural language. It never performs a destructive action
+  directly - every proposal still opens the exact same confirmation dialog a manual click would, so you always review
+  and approve before anything is touched.
+- **A redesigned interface**: a collapsible icon-and-label sidebar, resizable panels (main list / preview / copilot
+  chat) with persisted sizing, hairline dividers, and explicit high-contrast styling for selected/disabled controls.
+- **A full rebrand** (Krokiet/Czkawka → NeuralDisk) across binaries, packaging metadata, and user-facing text, under
+  the `io.neuraldisk.*` namespace.
+
+Everything else - the scanning tools, their algorithms, the CLI, the legacy GTK GUI, the Android app - is Czkawka's
+work, carried forward as-is or with minor adjustments.
 
 ## Features
 
@@ -23,6 +44,7 @@
 - **GUI frontend** - uses Slint or GTK 4 frameworks
 - **Core library** - allows to reuse functionality in other apps
 - **Android app** - touch-friendly frontend for Android devices
+- **AI copilot (optional)** - a local, natural-language assistant for driving the tools below
 - **No spying** - NeuralDisk does not have access to the Internet, nor does it collect any user information or statistics
 - **Multilingual** - support multiple languages like Polish, English or Italian
 - **Multiple tools to use**:
@@ -41,27 +63,15 @@
     - **Video Optimizer** - Crops from static parts and converts videos to more efficient formats
     - **Bad Names** - Finds files with names that may be not wanted (e.g., containing special characters)
 
-![NeuralDisk](https://github.com/user-attachments/assets/3cc7ec6a-3d6a-42cb-9d33-4b0f0c547af6)
-
-![NeuralDisk Gui](https://github.com/user-attachments/assets/b0409515-1bec-4e13-8fac-7bdfa15f5848)
-
-Changelog about each version can be found in [CHANGELOG.md](Changelog.md).
-
-New releases can be found in [Github releases](https://github.com/qarmin/czkawka/releases) and nightly builds also in [Nightly releases](https://github.com/qarmin/czkawka/releases/tag/Nightly)
-
-You can read more about the 12.0 release, its new features, and the issues that were fixed in the following articles:
-- English article - https://medium.com/@qarmin/krokiet-czkawka-12-0-6fa09c43c3b9
-- Polish article - https://medium.com/@qarmin/krokiet-czkawka-12-0-c5dad2116793
-
 ## Usage, installation, compilation, requirements, license
 
 Each tool uses different technologies, so you can find instructions for each of them in the appropriate file:
 
-- [NeuralDisk GUI (Slint frontend)](krokiet/README.md)</br>
-- [NeuralDisk Gui (GTK frontend)](czkawka_gui/README.md)</br>
-- [NeuralDisk CLI](czkawka_cli/README.md)</br>
-- [NeuralDisk Core](czkawka_core/README.md)</br>
-- [Cedinia](cedinia/README.md)</br>
+- [NeuralDisk GUI (Slint frontend)](neuraldisk/README.md)</br>
+- [NeuralDisk Gui (GTK frontend, legacy)](neuraldisk_gui/README.md)</br>
+- [NeuralDisk CLI](neuraldisk_cli/README.md)</br>
+- [NeuralDisk Core](neuraldisk_core/README.md)</br>
+- [Cedinia (Android)](cedinia/README.md)</br>
 
 ## Comparison to other tools
 
@@ -90,6 +100,7 @@ options to choose than other).
 |       Exif cleaner        |      ✔      |             |    ✔    |        |                   |             |
 |      Video optimizer      |      ✔      |             |         |        |                   |             |
 |         Bad Names         |      ✔      |             |    ✔    |        |                   |             |
+|      AI copilot chat      |      ✔      |             |         |        |                   |             |
 |      Names conflict       |             |             |         |   ✔    |                   |             |
 |    Installed packages     |             |             |         |   ✔    |                   |             |
 |          Bad ID           |             |             |         |   ✔    |                   |             |
@@ -99,11 +110,6 @@ options to choose than other).
 |     Portable version      |      ✔      |      ✔      |         |        |                   |      ✔      |
 |    Multiple languages     |      ✔      |      ✔      |    ✔    |   ✔    |         ✔         |      ✔      |
 |       Cache support       |      ✔      |      ✔      |    ✔    |        |         ✔         |             |
-|   In active development   |     Yes     |    No**     | Yes***  |   No   |  No<sup>*</sup>   |     Yes     |
-
-<p><sup>*</sup> Few small commits added recently and last version released in 2023</p> 
-<p><sup>**</sup> NeuralDisk Gui (GTK) 12.0 was the last released version - no new binaries will be provided</p>
-<p><sup>***</sup> Cedinia is an android app, video tools are not available due missing ffmpeg in Android</p>
 
 ## Other apps
 
@@ -118,81 +124,22 @@ There are many similar applications to NeuralDisk on the Internet, which do some
 
 ### CLI
 
-Due to limited time, the biggest emphasis is on the GUI version so if you are looking for really good and feature-packed
-console apps, then take a look at these:
-
-- [Fclones](https://github.com/pkolaczk/fclones) - One of the fastest tools to find duplicates; it is written also in
-  Rust
+- [Fclones](https://github.com/pkolaczk/fclones) - One of the fastest tools to find duplicates; it is written also in Rust
 - [Rmlint](https://github.com/sahib/rmlint) - Nice console interface and also is feature packed
 - [RdFind](https://github.com/pauldreik/rdfind) - Fast, but written in C++ ¯\\\_(ツ)\_/¯
 
+## Acknowledgements
 
-## Projects using NeuralDisk
-
-NeuralDisk exposes its common functionality through a crate called **`neuraldisk_core`**, which can be reused by other projects.
-
-It is written in Rust and is used by all NeuralDisk frontends (`neuraldisk_gui`, `neuraldisk_cli`, `neuraldisk`, `cedinia`).
-
-It is also used by external projects, such as:
-
-- **Czkawka Tauri** - https://github.com/shixinhuang99/czkawka-tauri - A Tauri-based GUI frontend for Czkawka.
-- **page-dewarp** - https://github.com/lmmx/page-dewarp - A library for dewarping document images using a cubic sheet model.
-
-Bindings are also available for:
-
-- **Python** - https://pypi.org/project/czkawka/
-
-Some projects work as wrappers around `neuraldisk_cli`. Without directly depending on `neuraldisk_core`, they allow simple scanning and retrieving results in JSON format:
-
-- **Schluckauf** - https://github.com/fadykuzman/schluckauf
-
-## Thanks
-
-Big thanks to Pádraig Brady, creator of fantastic FSlint, because without his work I wouldn't create this tool.
-
-Thanks also to all the people who contributed to the project in every possible way
-
-Also, I really appreciate work of people that create crates on which NeuralDisk is based and for that I try to report bugs to make it even better.
-
-## How to help?
-
-- **Creating issues** - Mainly related to bugs, oddly behaving functionality, etc. As you can see from the issue tracker, there are plenty of ideas for new features, but most of them are either difficult to implement or not aligned with the vision of the project, which evolves slightly over time.
-- **Creating pull requests** - Bug fixes are of course very welcome. Regarding new features, it is best to consult with me before implementing them to confirm they align with the project vision. A POC implemented in Rust as external script/project would be useful, especially for more complex features, to ensure there are no technical limitations.
-- **Updating translations** - The project uses the Crowdin platform, where translations can be created and updated. In the case of a new release and missing translations, I use machine translation, which is often inaccurate, so updating translations is highly appreciated.
-- **Creating packages for various platforms** - Due to the difficulties related to adding and maintaining support for each new platform, such as learning package formats like deb or rpm, creating installers and packages, I decided to mainly focus on providing prebuilt binaries. However, having the project available in distribution repositories or in projects such as Chocolatey, Homebrew or Winget would be beneficial for users who prefer centralized repositories.
-- **Creating articles, videos, tutorials, etc.** - Any material that helps people better understand this program and its capabilities is welcome.
-- **Recommending it to friends, family, coworkers, etc.** - This is probably the simplest way to help the project become even more popular, which gives me motivation to continue developing the program. Here are a few example ways to naturally mention this program in a regular conversation:
-
-**S** - Someone  
-**Y** - You  
-
-### Situation 1:
-
-- **S** - Hey Anon, I have a lot of junk on my disk, what should I do?
-- **Y** - Download NeuralDisk. They are completely free and works on almost every system.
-- **S** - Thanks man!
-
-### Situation 2:
-
-- **S** - I am so thirsty...
-- **Y** - Have you heard about NeuralDisk?
-- **S** - Wait, what?
-- **Y** - NeuralDisk, in case you did not know, let you clean unnecessary files from your disk. They are completely free...
-- **S** - That is nice, but I am thirsty...
-- **Y** - ...they work on Windows, Linux and macOS, and some people even port them to FreeBSD and Android...
-
+NeuralDisk exists because of the work of many people on the upstream Czkawka project, most of all its creator,
+Rafał Mikrut, and everyone who contributed code, translations, bug reports, and packaging over the years. It also
+builds on [FSlint](https://github.com/pixelb/fslint) by Pádraig Brady, which was Czkawka's own original inspiration.
 
 ## AI Policy
-The vast majority of the code in this project was written by me (qarmin) without using AI. However, as AI tools have improved and can significantly simplify development and reduce boilerplate, I see no reason to forbid their use. I have also added a AGENTS.md file to the repo to make it easier to provide AI tools with context about the project’s style and code structure.
 
-That said, every pull request, whether created with AI or not, must meet proper quality standards. The author must be able to clearly explain what the code does, without relying on AI for that explanation. I manually review every PR and test each change, so the risk of incorrect code slipping through is low. Still, to avoid wasting time, please refrain from submitting AI Slop PRs.
-
-## Officially Supported Projects
-Only this repository, [prebuild-binaries](https://github.com/qarmin/czkawka/releases), projects on [crates.io](https://crates.io/crates/czkawka_gui) and [flathub](https://flathub.org/apps/com.github.qarmin.czkawka) are directly maintained by me.  
-
-NeuralDisk does not have an official website, so do not trust any sites that claim to be the official one.  
-
-If you use packages from unofficial sources, make sure they are safe.
+The upstream Czkawka project's own code was, by its maintainer's account, almost entirely written without AI
+assistance. This fork's additions on top of it (the AI copilot feature, the interface redesign, and the rebrand) were
+built with AI assistance (Claude). That's disclosed here in the interest of transparency, not as a claim about the
+quality or provenance of the underlying project.
 
 ## License
 
@@ -200,10 +147,6 @@ The entire code in this repository is licensed under the [MIT](https://mit-licen
 
 All images and audio files are licensed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
-The NeuralDisk Gui (GTK) and CLI applications are licensed under the [MIT](https://mit-license.org/) license, while NeuralDisk and Cedinia(due Slint license requirements) are licensed under the [GPL-3.0-only](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
+The NeuralDisk Gui (GTK) and CLI applications are licensed under the [MIT](https://mit-license.org/) license, while NeuralDisk and Cedinia (due Slint license requirements) are licensed under the [GPL-3.0-only](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
-## Donations
-
-If you are using the app, I would appreciate a donation for its further development, which can be
-done [here](https://github.com/sponsors/qarmin).
-
+Original copyright notices from the upstream Czkawka project are preserved in the LICENSE files in this repository.

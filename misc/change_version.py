@@ -5,9 +5,9 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-CORE_MANIFEST = "czkawka_core/Cargo.toml"
-CRATES = ["czkawka_core", "czkawka_cli", "czkawka_gui", "krokiet", "cedinia"]
-METAINFOS = ["data/com.github.qarmin.czkawka.metainfo.xml", "data/io.github.qarmin.krokiet.metainfo.xml"]
+CORE_MANIFEST = "neuraldisk_core/Cargo.toml"
+CRATES = ["neuraldisk_core", "neuraldisk_cli", "neuraldisk_gui", "neuraldisk", "cedinia"]
+METAINFOS = ["data/io.neuraldisk.neuraldisk_gui.metainfo.xml", "data/io.neuraldisk.neuraldisk.metainfo.xml"]
 
 
 @dataclass
@@ -48,21 +48,19 @@ def build_rules(old: str, new: str, iso_date: str) -> list[Rule]:
     rules = [
         Rule("cedinia/android/app/build.gradle.kts", f'versionName = "{esc}"', f'versionName = "{new}"'),
         Rule("cedinia/ui/screens/settings_screen.slint", f'"Cedinia {esc}"', f'"Cedinia {new}"'),
-        Rule("krokiet/ui/main_window.slint", f'"Krokiet\\\\n{esc}"', f'"Krokiet\\\\n{new}"'),
-        Rule("krokiet/ui/screens/about.slint", f'text: "{esc}";', f'text: "{new}";'),
-        Rule("czkawka_gui/ui/about_dialog.ui", f'name="version">{esc}<', f'name="version">{new}<'),
-        Rule("czkawka_gui/ui/main_window.ui", f"Czkawka {esc}<", f"Czkawka {new}<"),
+        Rule("neuraldisk/ui/screens/about.slint", f'text: "{esc}";', f'text: "{new}";'),
+        Rule("neuraldisk_gui/ui/about_dialog.ui", f'name="version">{esc}<', f'name="version">{new}<'),
+        Rule("neuraldisk_gui/ui/main_window.ui", f"NeuralDisk Gui {esc}<", f"NeuralDisk Gui {new}<"),
         Rule("misc/cargo/PublishCore.sh", f'NUMBER="{esc}"', f'NUMBER="{new}"'),
         Rule("misc/cargo/PublishOther.sh", f'NUMBER="{esc}"', f'NUMBER="{new}"'),
         Rule(".github/ISSUE_TEMPLATE/bug_report.md", f"version: {esc},", f"version: {new},"),
         Rule(".github/ISSUE_TEMPLATE/bug_report.md", f"e.g. {esc} cli/gui", f"e.g. {new} cli/gui"),
-        Rule("README.md", f"about the {esc} release", f"about the {new} release"),
     ]
     for crate in CRATES:
         manifest = f"{crate}/Cargo.toml"
         rules.append(Rule(manifest, f'^version = "{esc}"$', f'version = "{new}"'))
-        if crate != "czkawka_core":
-            rules.append(Rule(manifest, f'(czkawka_core = \\{{[^}}]*version = "){esc}"', f'\\g<1>{new}"'))
+        if crate != "neuraldisk_core":
+            rules.append(Rule(manifest, f'(neuraldisk_core = \\{{[^}}]*version = "){esc}"', f'\\g<1>{new}"'))
     for metainfo in METAINFOS:
         rules.append(
             Rule(metainfo, r'<release version="[^"]*" date="[^"]*"/>', f'<release version="{new}" date="{iso_date}"/>')

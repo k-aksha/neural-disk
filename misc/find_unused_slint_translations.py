@@ -2,7 +2,7 @@ import os
 import sys
 
 
-# Find translations in krokiet/src/translations.slint
+# Find translations in neuraldisk/src/translations.slint
 # Check if in other slint files they are used
 # Check if in all items from translations are used in a way f"set_{}(" in src/connect_translation.rs
 
@@ -59,7 +59,7 @@ if len(sys.argv) < 2:
 
 folder = sys.argv[1]
 
-# Support both krokiet (connect_translation.rs) and cedinia (translations.rs)
+# Support both neuraldisk (connect_translation.rs) and cedinia (translations.rs)
 translation_rs_candidates = [
     f"{folder}/src/connect_translation.rs",
     f"{folder}/src/translations.rs",

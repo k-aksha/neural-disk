@@ -1,3 +1,22 @@
+## Version 1.0.0 - 02.09.2026r
+
+NeuralDisk is a fork and continuation of [Czkawka](https://github.com/qarmin/czkawka) (see the
+root [README](README.md) for the full story). The version number resets to 1.0.0 to mark this
+fork's own release line; it does not imply the underlying scanning engine is new or unstable -
+everything below "Version 12.0.1" is Czkawka's history, carried forward unchanged, and is kept
+here for reference.
+
+### New in this fork
+- Added an AI copilot panel to NeuralDisk (Slint GUI) - a chat assistant backed by a locally-run
+  Ollama server that can run scans and propose file actions (delete/trash/move/rename/hardlink/
+  symlink/etc.) in natural language. Every proposed action still opens the same human-confirmation
+  dialog a manual click would; the assistant never touches files directly.
+- Redesigned the NeuralDisk interface: a collapsible icon-and-label sidebar, resizable panels
+  (main list / preview / copilot chat) with persisted sizing, hairline dividers between panels,
+  and higher-contrast styling for selected/disabled controls.
+- Rebranded the project (Krokiet/Czkawka -> NeuralDisk) across binaries, packaging metadata, and
+  user-facing text, under the `io.neuraldisk.*` namespace.
+
 ## Version 12.0.1 - 29.07.2026r
 
 ### Core

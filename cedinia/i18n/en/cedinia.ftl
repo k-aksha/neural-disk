@@ -193,8 +193,6 @@ collect_test_cancelled = Stopped by user
 diag_confirm_clear_thumbnails = Clear all thumbnail cache?
 diag_confirm_clear_cache = Clear all app cache?
 about_repo = Repository
-about_translate = Translations
-about_donate = Donate
 
 # Collect-test result popup
 collect_test_title = Test results

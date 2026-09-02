@@ -74,7 +74,7 @@ for ftl_file in ftl_files:
             unused.append(key)
     if unused:
         print(
-            f"Unused keys in {ftl_file}(needs to bind to slint in connect_translations.rs file, if using krokiet, otherwise it needs to be removed from ftl file or added to code):"
+            f"Unused keys in {ftl_file}(needs to bind to slint in connect_translations.rs file, if using neuraldisk, otherwise it needs to be removed from ftl file or added to code):"
         )
         for key in unused:
             print(f"  {format_green(key)}")

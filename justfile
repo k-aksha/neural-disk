@@ -6,7 +6,7 @@ set export := true
 # export ANDROID_NDK_HOME=~/android-sdk/ndk/26.x.x
 
 adb := "adb"
-apk_package := "io.github.qarmin.cedinia"
+apk_package := "io.neuraldisk.cedinia"
 apk_activity := "android.app.NativeActivity"
 
 build_all: && fix
@@ -18,9 +18,9 @@ build_all: && fix
 itests:
     [ ! -f TestFiles.zip ] && wget https://github.com/qarmin/czkawka/releases/download/6.0.0/TestFiles.zip || true
     cd ci_tester && cargo build --release && cd ..
-    cargo build --release --bin czkawka_cli
+    cargo build --release --bin neuraldisk_cli
 
-    RUST_BACKTRACE=1 ci_tester/target/release/ci_tester target/release/czkawka_cli
+    RUST_BACKTRACE=1 ci_tester/target/release/ci_tester target/release/neuraldisk_cli
 
 ## run
 
@@ -73,7 +73,7 @@ setup_sanitizer_android:
 
 
 bench:
-    cd czkawka_core && cargo bench
+    cd neuraldisk_core && cargo bench
     xdg-open target/criterion/report/index.html
 
 bench_clean:
@@ -121,14 +121,14 @@ ignored:
 # Not works, due of edition 2024 and workspaces
 unused_features:
     unused-features analyze
-    unused-features build-report --input krokiet/report.json
-    unused-features build-report --input czkawka_cli/report.json
-    unused-features build-report --input czkawka_core/report.json
-    unused-features build-report --input czkawka_gui/report.json
-    xdg-open krokiet/report.html
-    xdg-open czkawka_cli/report.html
-    xdg-open czkawka_core/report.html
-    xdg-open czkawka_gui/report.html
+    unused-features build-report --input neuraldisk/report.json
+    unused-features build-report --input neuraldisk_cli/report.json
+    unused-features build-report --input neuraldisk_core/report.json
+    unused-features build-report --input neuraldisk_gui/report.json
+    xdg-open neuraldisk/report.html
+    xdg-open neuraldisk_cli/report.html
+    xdg-open neuraldisk_core/report.html
+    xdg-open neuraldisk_gui/report.html
 
 ##################### VERSION #####################
 
@@ -340,8 +340,8 @@ android_build_aab:
 prepare_binaries:
     mkdir -p benchmarks
     wget https://github.com/qarmin/czkawka/releases/download/Nightly/linux_czkawka_cli -O benchmarks/czkawka_cli_normal
-    cd czkawka_cli; cargo build --release; cd ..; cp target/release/czkawka_cli benchmarks/czkawka_cli_v4
-    cd czkawka_cli; cargo build --profile fastest; cd ..; cp target/fastest/czkawka_cli benchmarks/czkawka_cli_fastest
+    cd neuraldisk_cli; cargo build --release; cd ..; cp target/release/neuraldisk_cli benchmarks/czkawka_cli_v4
+    cd neuraldisk_cli; cargo build --profile fastest; cd ..; cp target/fastest/neuraldisk_cli benchmarks/czkawka_cli_fastest
 
 benchmark media:
     # benchmarks/czkawka_cli_old dup -d /media/rafal/Kotyk
@@ -361,9 +361,9 @@ tags:
     tags=($(git tag --sort=version:refname | grep -v Nightly)); for ((i=0; i<${#tags[@]}-1; i++)); do from=${tags[$i]}; to=${tags[$i+1]}; echo "$from -> $to : $(git diff --shortstat "$from" "$to")"; done; last=${tags[-1]}; echo "$last -> master : $(git diff --shortstat "$last" master)"
 
 install:
-    cargo install --path czkawka_cli --locked
-    cargo install --path krokiet --locked
-    cargo install --path czkawka_gui --locked
+    cargo install --path neuraldisk_cli --locked
+    cargo install --path neuraldisk --locked
+    cargo install --path neuraldisk_gui --locked
 
 ##################### TRANSLATIONS #####################
 
@@ -378,28 +378,28 @@ prepare_translations_deps:
     export OLLAMA_VULKAN=1; export HSA_OVERRIDE_GFX_VERSION=10.3.0; ollama pull translategemma:12b
 
 translate:
-    uv run misc/ai_translate/translate.py czkawka_gui/i18n
-    uv run misc/ai_translate/translate.py czkawka_core/i18n
-    uv run misc/ai_translate/translate.py krokiet/i18n
+    uv run misc/ai_translate/translate.py neuraldisk_gui/i18n
+    uv run misc/ai_translate/translate.py neuraldisk_core/i18n
+    uv run misc/ai_translate/translate.py neuraldisk/i18n
     uv run misc/ai_translate/translate.py cedinia/i18n
 
 validate_translations *args: # Available --fix argument, which removes invalid translations
-    uv run misc/ai_translate/validate_translations.py czkawka_gui/i18n {{args}}
-    uv run misc/ai_translate/validate_translations.py czkawka_core/i18n {{args}}
-    uv run misc/ai_translate/validate_translations.py krokiet/i18n {{args}}
+    uv run misc/ai_translate/validate_translations.py neuraldisk_gui/i18n {{args}}
+    uv run misc/ai_translate/validate_translations.py neuraldisk_core/i18n {{args}}
+    uv run misc/ai_translate/validate_translations.py neuraldisk/i18n {{args}}
     uv run misc/ai_translate/validate_translations.py cedinia/i18n {{args}}
 
 # Crowdin allows to import zip file with structured translations
 pack_translations:
     rm -f i18n_translations.zip
     mkdir -p /tmp/czkawka_i18n
-    for lang in czkawka_gui/i18n/*/; do \
+    for lang in neuraldisk_gui/i18n/*/; do \
         lang_code=$(basename "$lang"); \
         [ "$lang_code" = "en" ] && continue; \
         mkdir -p "/tmp/czkawka_i18n/i18n/$lang_code"; \
-        [ -f "czkawka_gui/i18n/$lang_code/czkawka_gui.ftl" ] && cp "czkawka_gui/i18n/$lang_code/czkawka_gui.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
-        [ -f "czkawka_core/i18n/$lang_code/czkawka_core.ftl" ] && cp "czkawka_core/i18n/$lang_code/czkawka_core.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
-        [ -f "krokiet/i18n/$lang_code/krokiet.ftl" ] && cp "krokiet/i18n/$lang_code/krokiet.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
+        [ -f "neuraldisk_gui/i18n/$lang_code/czkawka_gui.ftl" ] && cp "neuraldisk_gui/i18n/$lang_code/czkawka_gui.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
+        [ -f "neuraldisk_core/i18n/$lang_code/czkawka_core.ftl" ] && cp "neuraldisk_core/i18n/$lang_code/czkawka_core.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
+        [ -f "neuraldisk/i18n/$lang_code/krokiet.ftl" ] && cp "neuraldisk/i18n/$lang_code/krokiet.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
         [ -f "cedinia/i18n/$lang_code/cedinia.ftl" ] && cp "cedinia/i18n/$lang_code/cedinia.ftl" "/tmp/czkawka_i18n/i18n/$lang_code/" || true; \
     done
     cd /tmp/czkawka_i18n && zip -r - i18n > "{{justfile_directory()}}/i18n_translations.zip"
@@ -412,22 +412,22 @@ unpack_translations path_to_file:
     unzip -q "{{path_to_file}}" -d /tmp/czkawka_unpack
     for lang_dir in /tmp/czkawka_unpack/*/; do \
         lang_code=$(basename "$lang_dir"); \
-        [ -f "$lang_dir/czkawka_gui.ftl" ] && mkdir -p "czkawka_gui/i18n/$lang_code" && cp "$lang_dir/czkawka_gui.ftl" "czkawka_gui/i18n/$lang_code/" && echo "Copied czkawka_gui.ftl to czkawka_gui/i18n/$lang_code/" || true; \
-        [ -f "$lang_dir/czkawka_core.ftl" ] && mkdir -p "czkawka_core/i18n/$lang_code" && cp "$lang_dir/czkawka_core.ftl" "czkawka_core/i18n/$lang_code/" && echo "Copied czkawka_core.ftl to czkawka_core/i18n/$lang_code/" || true; \
-        [ -f "$lang_dir/krokiet.ftl" ] && mkdir -p "krokiet/i18n/$lang_code" && cp "$lang_dir/krokiet.ftl" "krokiet/i18n/$lang_code/" && echo "Copied krokiet.ftl to krokiet/i18n/$lang_code/" || true; \
+        [ -f "$lang_dir/czkawka_gui.ftl" ] && mkdir -p "neuraldisk_gui/i18n/$lang_code" && cp "$lang_dir/czkawka_gui.ftl" "neuraldisk_gui/i18n/$lang_code/" && echo "Copied czkawka_gui.ftl to neuraldisk_gui/i18n/$lang_code/" || true; \
+        [ -f "$lang_dir/czkawka_core.ftl" ] && mkdir -p "neuraldisk_core/i18n/$lang_code" && cp "$lang_dir/czkawka_core.ftl" "neuraldisk_core/i18n/$lang_code/" && echo "Copied czkawka_core.ftl to neuraldisk_core/i18n/$lang_code/" || true; \
+        [ -f "$lang_dir/krokiet.ftl" ] && mkdir -p "neuraldisk/i18n/$lang_code" && cp "$lang_dir/krokiet.ftl" "neuraldisk/i18n/$lang_code/" && echo "Copied krokiet.ftl to neuraldisk/i18n/$lang_code/" || true; \
         [ -f "$lang_dir/cedinia.ftl" ] && mkdir -p "cedinia/i18n/$lang_code" && cp "$lang_dir/cedinia.ftl" "cedinia/i18n/$lang_code/" && echo "Copied cedinia.ftl to cedinia/i18n/$lang_code/" || true; \
     done
     rm -rf /tmp/czkawka_unpack
     @echo "Translations unpacked successfully"
 
 cache:
-    xdg-open ~/.cache/czkawka
+    xdg-open ~/.cache/neuraldisk
 
 configc:
-    xdg-open ~/.config/czkawka
+    xdg-open ~/.config/neuraldiskcli
 
 configk:
-    xdg-open ~/.config/krokiet
+    xdg-open ~/.config/neuraldisk
 
 
 ##################### DEBUG SIZE, PERFORMANCE AND OTHERS #####################
@@ -438,34 +438,34 @@ setup_verify_tools:
 
 # Prints lines of certain functions in binary
 llvm_lines:
-    cargo llvm-lines -p krokiet --bin krokiet | head -40
-    cargo llvm-lines -p czkawka_gui --bin czkawka_gui | head -40
-    cargo llvm-lines -p czkawka_cli --bin czkawka_cli | head -40
+    cargo llvm-lines -p neuraldisk --bin neuraldisk | head -40
+    cargo llvm-lines -p neuraldisk_gui --bin neuraldisk_gui | head -40
+    cargo llvm-lines -p neuraldisk_cli --bin neuraldisk_cli | head -40
 
 # Prints size of functions in binary
 bloat_by_function:
-    cargo bloat --release --bin czkawka_cli -n 30
-    cargo bloat --release --bin czkawka_gui -n 30
-    cargo bloat --release --bin krokiet -n 30
+    cargo bloat --release --bin neuraldisk_cli -n 30
+    cargo bloat --release --bin neuraldisk_gui -n 30
+    cargo bloat --release --bin neuraldisk -n 30
 
 # Prints size of crates in binary
 bloat_by_crate:
-    cargo bloat --release --crates --bin czkawka_cli
-    cargo bloat --release --crates --bin czkawka_gui
-    cargo bloat --release --crates --bin krokiet
+    cargo bloat --release --crates --bin neuraldisk_cli
+    cargo bloat --release --crates --bin neuraldisk_gui
+    cargo bloat --release --crates --bin neuraldisk
 
 # Draws dependency graphs of certain binaries(like regex, image, etc)
 dependencies_graph:
-    cd czkawka_core;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
-    cd czkawka_cli;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
-    cd czkawka_gui;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
-    cd krokiet;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
+    cd neuraldisk_core;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
+    cd neuraldisk_cli;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
+    cd neuraldisk_gui;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
+    cd neuraldisk;cargo deps --all-deps | dot -Tpng > deps.png;cd ..
 
 # Shows llvm compilation data summary
 profiling profile='debug' mode='build':
     if [ "{{profile}}" = "release" ]; then release_flag="--release"; else release_flag=""; fi; \
     cargo clean; \
-    for crate in czkawka_core czkawka_gui czkawka_cli krokiet; do \
+    for crate in neuraldisk_core neuraldisk_gui neuraldisk_cli neuraldisk; do \
         cd "$crate"; \
         rm ../*.mm_profdata || true; \
         rm *.mm_profdata || true; \
@@ -478,7 +478,7 @@ profiling profile='debug' mode='build':
 timings profile='debug' mode='build':
     if [ "{{profile}}" = "release" ]; then release_flag="--release"; else release_flag=""; fi; \
     cargo clean; \
-    for crate in czkawka_core czkawka_gui czkawka_cli krokiet; do \
+    for crate in neuraldisk_core neuraldisk_gui neuraldisk_cli neuraldisk; do \
         cd "$crate"; \
         rm ../target/cargo-timings/*.html || true; \
         cargo "{{mode}}" $release_flag --timings; \
@@ -486,25 +486,25 @@ timings profile='debug' mode='build':
         cd ..; \
     done
     #cargo clean
-#    cd czkawka_core; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
+#    cd neuraldisk_core; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
 #    cargo clean
-#    cd czkawka_gui; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
+#    cd neuraldisk_gui; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
 #    cargo clean
-#    cd czkawka_cli; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
+#    cd neuraldisk_cli; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
 #    cargo clean
-#    cd krokiet; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
+#    cd neuraldisk; RUSTFLAGS="-Ztime" cargo +nightly rustc; cd ..;
 
 # Per crate compilation times and ram usage
 # This is very verbose, so probably not really useful
 time_passes:
     cargo clean
-    cd czkawka_core; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
+    cd neuraldisk_core; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
     cargo clean
-    cd czkawka_gui; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
+    cd neuraldisk_gui; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
     cargo clean
-    cd czkawka_cli; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
+    cd neuraldisk_cli; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
     cargo clean
-    cd krokiet; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
+    cd neuraldisk; RUSTFLAGS="-Ztime-passes" cargo +nightly rustc; cd ..;
 
 test_heaptrack:
     cd test && cargo build --profile rdebug

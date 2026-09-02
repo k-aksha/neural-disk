@@ -230,8 +230,6 @@ pub(crate) fn translate_items(app: &MainWindow) {
     t.set_and_more_suffix_text(flc!("and_more_suffix").into());
 
     t.set_about_repo_text(flc!("about_repo").into());
-    t.set_about_translate_text(flc!("about_translate").into());
-    t.set_about_donate_text(flc!("about_donate").into());
 
     t.set_same_music_fingerprint_warning_text(flc!("same_music_fingerprint_warning").into());
 

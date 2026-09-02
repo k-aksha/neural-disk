@@ -1,4 +1,4 @@
-# Czkawka – Codebase Guide
+# NeuralDisk – Codebase Guide
 
 ## Language
 
@@ -8,8 +8,8 @@ All code, comments, commit messages, and documentation must be written in **Engl
 
 ## Rust Style
 
-Applies to every Rust crate in the workspace (`czkawka_core`, `czkawka_cli`, `czkawka_gui`,
-`krokiet`, `cedinia`). Program-specific deviations or elaborations live in that program's own
+Applies to every Rust crate in the workspace (`neuraldisk_core`, `neuraldisk_cli`, `neuraldisk_gui`,
+`neuraldisk`, `cedinia`). Program-specific deviations or elaborations live in that program's own
 `AGENTS.md`.
 
 **Formatting & lints**
@@ -23,7 +23,7 @@ Applies to every Rust crate in the workspace (`czkawka_core`, `czkawka_cli`, `cz
 - `unwrap()` only in tests.
 - `expect()` in production only when BOTH hold: there is no correct recovery path, and
   continuing would likely hide a serious bug - always with a precise, actionable message. This
-  is visible throughout Krokiet/Cedinia callback code: a Slint weak reference is upgraded with
+  is visible throughout NeuralDisk/Cedinia callback code: a Slint weak reference is upgraded with
   `expect()` because if the window is already gone there is nothing meaningful to do except crash.
 - Never silently swallow errors with `let _ = ...` unless the failure is genuinely irrelevant.
 - Model domain errors with explicit types (`thiserror`/enums), not raw strings.
@@ -52,9 +52,9 @@ library bugs, etc. Do not restate what the code already says. Never use the `—
 characters in code, comments, or commit messages - plain `-` only (ASCII box-drawing diagrams are
 the only exception).
 
-Exception: `czkawka_core` is a library - every frontend in this workspace depends on it, and so do
+Exception: `neuraldisk_core` is a library - every frontend in this workspace depends on it, and so do
 external consumers who only read its public API, not its internals. Its `pub fn`/`pub struct`
-surface warrants more explanation than the rest of the workspace; see `czkawka_core/AGENTS.md`.
+surface warrants more explanation than the rest of the workspace; see `neuraldisk_core/AGENTS.md`.
 
 **Tests, fuzzers, benchmarks**
 - Cover as much code as possible with tests; keep them readable with explicit `assert_eq!` and
@@ -125,11 +125,11 @@ Running `just fix` must pass before any merge request. It runs, in order:
 2. `uv run ruff format --line-length 120` – Python code formatting.
 3. `uv run mypy misc --strict` – static type checking for all scripts in `misc/`.
 4. `bash misc/run_checks.sh` – project-specific checks:
-   - `delete_unused_krokiet_slint_imports.py` for krokiet and cedinia
+   - `delete_unused_krokiet_slint_imports.py` for neuraldisk and cedinia
    - `find_unused_fluent_translations.py` for all four projects
-   - `find_unused_slint_translations.py` for krokiet and cedinia
-   - `find_unused_callbacks.py` for krokiet and cedinia
-   - `find_unused_settings_properties.py` for krokiet and cedinia
+   - `find_unused_slint_translations.py` for neuraldisk and cedinia
+   - `find_unused_callbacks.py` for neuraldisk and cedinia
+   - `find_unused_settings_properties.py` for neuraldisk and cedinia
 5. `cargo +nightly fmt` – Rust formatting.
 6. `cargo clippy --fix --all-features --all-targets` – Rust linting (single pass).
 7. `cargo +nightly fmt` + `cargo fmt` again – re-format whatever clippy's fixes touched.
@@ -145,10 +145,10 @@ If `just fix` produces any output on stderr or exits non-zero the code is not re
 
 ```
 czkawka/
-├── czkawka_core/   # Scanning logic – shared library used by all frontends
-├── czkawka_cli/    # Command-line interface
-├── czkawka_gui/    # Legacy GTK 4 GUI (maintenance mode only)
-├── krokiet/        # Primary desktop GUI – Slint-based
+├── neuraldisk_core/   # Scanning logic – shared library used by all frontends
+├── neuraldisk_cli/    # Command-line interface
+├── neuraldisk_gui/    # Legacy GTK 4 GUI (maintenance mode only)
+├── neuraldisk/        # Primary desktop GUI – Slint-based
 ├── cedinia/        # Android / mobile GUI – Slint-based
 └── misc/           # Scripts: AI translation, validation, benchmarks, CI helpers
 ```
@@ -157,7 +157,7 @@ Cargo workspace resolver v3, minimum Rust 1.94.1, edition 2024 throughout.
 
 ---
 
-## czkawka_core
+## neuraldisk_core
 
 The shared scanning engine. Every frontend depends on it; it has no UI dependency.
 
@@ -177,7 +177,7 @@ support cancellation.
 
 ---
 
-## krokiet
+## neuraldisk
 
 The primary desktop GUI. Built with [Slint](https://slint.dev/) (GPL-3.0). The UI is declared
 in `ui/*.slint`; Rust connects callbacks and drives the Slint model.
@@ -217,7 +217,7 @@ An `Arc<Mutex<SharedModels>>` holds the last scan result and parameters of scan 
 
 ## cedinia
 
-The Android (and secondary desktop) GUI. Architecture mirrors Krokiet but adapts to mobile
+The Android (and secondary desktop) GUI. Architecture mirrors NeuralDisk but adapts to mobile
 constraints. Compiled as `cdylib` for Android (loaded via `android-activity`).
 
 **Entry points:**
@@ -230,25 +230,25 @@ constraints. Compiled as `cdylib` for Android (loaded via `android-activity`).
 - System insets (`inset_top`, `inset_bottom`) plumbed through to Slint for edge-to-edge layout.
 - `android_logger` routes Rust log output to logcat.
 
-**Differences from Krokiet:**
+**Differences from NeuralDisk:**
 - Has `SimilarVideos` (audio-fingerprint matching only, via `rusty-chromaprint`), but not
   `VideoOptimizer` - ffmpeg-based transcoding/crop-detection is not available on Android.
 - Touch-optimised UI (`cedinia/ui/`); momentum-scroll views, bottom sheets, FAB.
 - `flc!` macro (cedinia-specific) in `src/localizer_cedinia.rs`.
-- See `cedinia/AGENTS.md` ("Differences from krokiet") for the full comparison table.
+- See `cedinia/AGENTS.md` ("Differences from neuraldisk") for the full comparison table.
 
 **Translation:** `flc!("key")` macro; language files in `cedinia/i18n/<lang-code>/cedinia.ftl`.
 
 ---
 
-## czkawka_cli
+## neuraldisk_cli
 
-Thin wrapper around `czkawka_core`. Uses `clap` (derive API) for argument parsing and `indicatif`
+Thin wrapper around `neuraldisk_core`. Uses `clap` (derive API) for argument parsing and `indicatif`
 for progress bars. No GUI code. Results printed via the tool's `PrintResults` trait.
 
 ---
 
-## czkawka_gui
+## neuraldisk_gui
 
 Legacy GTK 4 GUI. **Maintenance mode only** – no new features are added. Bug-fixes that
 keep it compatible with core API changes are accepted.
@@ -273,7 +273,7 @@ keep it compatible with core API changes are accepted.
 - `gen_cedinia_licenses.py` – Generates `THIRD_PARTY_LICENSES.txt` from Cargo metadata.
 - `gen_android_icons.py` – Generates cedinia's Android adaptive-icon assets from an SVG logo.
 - `simplify_and_minify_svg.py` – Minifies SVG icons via Inkscape.
-- `pack_all_backends.sh` / `.ps1` – Bundles an all-backends krokiet binary with per-backend
+- `pack_all_backends.sh` / `.ps1` – Bundles an all-backends neuraldisk binary with per-backend
   launcher scripts into a release zip.
 - `flathub.sh` – Generates Flatpak cargo-sources metadata for the Flathub manifest.
 - `add_icon_exe/` – Cargo helper crate that embeds the `.ico` into Windows binaries at build time.
@@ -299,10 +299,13 @@ All user-visible strings use [Fluent](https://projectfluent.org/) (`.ftl` files)
 
 | Project      | Macro  | File pattern                                |
 |--------------|--------|---------------------------------------------|
-| krokiet      | `flk!` | `krokiet/i18n/<lang>/krokiet.ftl`           |
+| neuraldisk      | `flk!` | `neuraldisk/i18n/<lang>/krokiet.ftl`           |
 | cedinia      | `flc!` | `cedinia/i18n/<lang>/cedinia.ftl`           |
-| czkawka_core | `flc!` | `czkawka_core/i18n/<lang>/czkawka_core.ftl` |
-| czkawka_gui  | `flg!` | `czkawka_gui/i18n/<lang>/czkawka_gui.ftl`   |
+| neuraldisk_core | `flc!` | `neuraldisk_core/i18n/<lang>/czkawka_core.ftl` |
+| neuraldisk_gui  | `flg!` | `neuraldisk_gui/i18n/<lang>/czkawka_gui.ftl`   |
+
+(the `.ftl` base filenames above intentionally still match their historical Fluent i18n-embed
+`domain` - see each crate's `i18n.toml` - and were not renamed with the rest of the workspace)
 
 English is the source/fallback language. All other locales are AI-translated and then validated.
 
@@ -340,8 +343,8 @@ All other language files are managed through [Crowdin](https://crowdin.com/) and
 ## justfile quick reference
 
 ```
-just run krokiet          # debug run
-just runr krokiet         # fast_release run
+just run neuraldisk          # debug run
+just runr neuraldisk         # fast_release run
 just fix                  # format + clippy + Python checks
 just translate            # AI-translate all projects
 just validate_translations [--fix]

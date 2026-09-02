@@ -396,10 +396,10 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 misc/ai_translate/translate.py czkawka_gui/i18n
-  python3 misc/ai_translate/translate.py krokiet/i18n --model qwen2.5:7b
-  python3 misc/ai_translate/translate.py czkawka_gui/i18n --dry-run
-  python3 misc/ai_translate/translate.py czkawka_gui/i18n --languages pl de fr
+  python3 misc/ai_translate/translate.py neuraldisk_gui/i18n
+  python3 misc/ai_translate/translate.py neuraldisk/i18n --model qwen2.5:7b
+  python3 misc/ai_translate/translate.py neuraldisk_gui/i18n --dry-run
+  python3 misc/ai_translate/translate.py neuraldisk_gui/i18n --languages pl de fr
         """,
     )
 

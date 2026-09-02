@@ -183,7 +183,7 @@ impl StringComboBoxItems {
             ("audio", CheckingMethod::AudioContent, DisplaySpec::Translatable("option_music_method_audio")),
         ]);
 
-        // Preset values match krokiet's apply_similar_videos_audio_preset().
+        // Preset values match neuraldisk's apply_similar_videos_audio_preset().
         let similar_videos_audio_preset = Self::convert_i18n(&[
             (
                 "identical",

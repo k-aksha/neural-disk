@@ -33,7 +33,7 @@ public class CediniaFilePicker {
     private static PowerManager.WakeLock sWakeLock = null;
 
     /**
-     * Acquire a PARTIAL_WAKE_LOCK so the CPU keeps running while Czkawka
+     * Acquire a PARTIAL_WAKE_LOCK so the CPU keeps running while Cedinia
      * scans files in the background.  Safe to call from any thread.
      * A 60-minute safety timeout is set in case releaseWakeLock is never called.
      */

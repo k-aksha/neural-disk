@@ -6,7 +6,7 @@ script_path = os.path.dirname(os.path.abspath(__file__))
 
 if len(sys.argv) < 2:
     print("Usage: python delete_unused_krokiet_slint_imports.py <folder>")
-    print("  Example: python delete_unused_krokiet_slint_imports.py krokiet")
+    print("  Example: python delete_unused_krokiet_slint_imports.py neuraldisk")
     print("  Example: python delete_unused_krokiet_slint_imports.py cedinia")
     sys.exit(1)
 

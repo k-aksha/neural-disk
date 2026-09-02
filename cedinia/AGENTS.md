@@ -2,7 +2,7 @@
 
 ## Overview
 
-Android (and secondary desktop) GUI. Architecture mirrors krokiet but adapted
+Android (and secondary desktop) GUI. Architecture mirrors neuraldisk but adapted
 for mobile constraints: touch-optimized layout, JNI file picker, runtime
 permissions, system insets, and no `VideoOptimizer` (FFmpeg-based transcoding
 is unavailable on Android). `SimilarVideos` is still present, using
@@ -27,10 +27,10 @@ fn android_main(android_app: AndroidApp) {
 ```
 
 Logging: on Android `android_logger` would grab the single global `log` slot, so
-czkawka_core's file `WriteLogger` never installs (cedinia.log stays 0 bytes).
+neuraldisk_core's file `WriteLogger` never installs (cedinia.log stays 0 bytes).
 `app.rs::setup_android_logger` installs a `DualLogger` fanning out to BOTH the
 `AndroidLogger` (logcat) and an appended `cedinia.log` in the cache folder, so
-log export has real content. Desktop keeps `czkawka_core::setup_logger`.
+log export has real content. Desktop keeps `neuraldisk_core::setup_logger`.
 
 **Desktop** (`src/app.rs`):
 ```rust
@@ -193,7 +193,7 @@ Inline accordion, **not** a `PopupWindow`:
 
 ## Translation System
 
-Same workaround as krokiet:
+Same workaround as neuraldisk:
 - All UI text bound to `Translations` global properties.
 - `translate_items()` in `src/translations.rs` populates them via `flc!("key")`.
 - `LANGUAGE_LIST` in `localizer_cedinia.rs` defines the 27 supported languages.
@@ -206,11 +206,11 @@ Same workaround as krokiet:
 
 ## Settings (`src/settings/mod.rs`)
 
-JSON file (path resolved by `czkawka_core::common::config_cache_path::get_config_cache_path()`,
+JSON file (path resolved by `neuraldisk_core::common::config_cache_path::get_config_cache_path()`,
 configured via `set_config_cache_path("cedinia", "cedinia")`):
 - Desktop: `~/.config/cedinia/cedinia_settings.json` (directories-next ignores
   the qualifier/org on Linux and lowercases the app name - there is no
-  `Czkawka` path segment)
+  `NeuralDisk` path segment)
 - Android: app-private storage, `$DATA_DIR/files/cedinia/cedinia_settings.json`
 
 Included/excluded directories are persisted separately in a sibling
@@ -256,13 +256,13 @@ Slint as layout properties.
 
 `setup_android_paths()` calls `getFilesDir()` and `getCacheDir()` on the
 Activity to find private storage paths; these are set as environment variables
-and used by `czkawka_core`'s config path logic.
+and used by `neuraldisk_core`'s config path logic.
 
 ---
 
-## Differences from krokiet
+## Differences from neuraldisk
 
-| | cedinia | krokiet |
+| | cedinia | neuraldisk |
 |---|---|---|
 | `SimilarVideos` | Yes (audio fingerprint only, `rusty-chromaprint`) | Yes (frame hashing) |
 | `VideoOptimizer` | No (ffmpeg-based transcoding unavailable on Android) | Yes |
@@ -281,7 +281,7 @@ and used by `czkawka_core`'s config path logic.
 | Crate | Purpose |
 |-------|---------|
 | `slint` 1.15 | UI framework |
-| `czkawka_core` | Scanning engine |
+| `neuraldisk_core` | Scanning engine |
 | `crossbeam-channel` | Worker thread communication |
 | `i18n-embed` + `rust-embed` | Fluent translations |
 | `serde_json` | Settings persistence |
@@ -322,7 +322,7 @@ does not include it - a pre-existing inconsistency in the repo, not a doc bug.
 
 ---
 
-## Optional Features (forwarded to czkawka_core)
+## Optional Features (forwarded to neuraldisk_core)
 
 `heif`, `libraw`, `libavif`, `xdg_portal_trash`
 

@@ -18,8 +18,8 @@ Only letters (Unicode category L*) are script-checked. A letter is reported when
 its script is not in the set expected for the language.
 
 Usage:
-  python3 misc/ai_translate/validate_charset.py krokiet/i18n
-  python3 misc/ai_translate/validate_charset.py czkawka_core/i18n --languages fa ar
+  python3 misc/ai_translate/validate_charset.py neuraldisk/i18n
+  python3 misc/ai_translate/validate_charset.py neuraldisk_core/i18n --languages fa ar
 """
 
 import argparse
@@ -224,8 +224,8 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 misc/ai_translate/validate_charset.py krokiet/i18n
-  python3 misc/ai_translate/validate_charset.py czkawka_core/i18n --languages fa ar
+  python3 misc/ai_translate/validate_charset.py neuraldisk/i18n
+  python3 misc/ai_translate/validate_charset.py neuraldisk_core/i18n --languages fa ar
         """,
     )
     parser.add_argument("i18n_folder", type=str, help="Path to the i18n folder containing language subdirectories")

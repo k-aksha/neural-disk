@@ -1,3 +1,5 @@
 # These are supported funding model platforms
-
-github: qarmin # Replace with up to 4 GitHub Sponsors-enabled usernames e.g., [user1, user2]
+#
+# Left unset: this repo is a fork, and github Sponsors here would otherwise point at the
+# upstream author's account rather than anyone involved in maintaining this fork.
+# Replace with up to 4 GitHub Sponsors-enabled usernames e.g., [user1, user2]

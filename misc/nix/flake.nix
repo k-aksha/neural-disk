@@ -18,7 +18,7 @@
         pkgs = import nixpkgs {
           inherit system overlays;
         };
-        cargoToml = (builtins.fromTOML (builtins.readFile ../../czkawka_core/Cargo.toml));
+        cargoToml = (builtins.fromTOML (builtins.readFile ../../neuraldisk_core/Cargo.toml));
       in
       {
         packages = (import ./packages.nix { 

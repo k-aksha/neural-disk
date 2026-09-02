@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Generate tiny test image assets embedded in czkawka_core for runtime feature probing.
+Generate tiny test image assets embedded in neuraldisk_core for runtime feature probing.
 
 Run via: uv run --with pillow --with pillow-heif misc/gen_test_assets.py
 
 Outputs:
-  czkawka_core/src/common/test_assets/test_3x3.png        (baseline, always present)
-  czkawka_core/src/common/test_assets/test_3x3.avif       (libavif runtime probe)
-  czkawka_core/src/common/test_assets/test_3x3.heic       (heif HEVC runtime probe)
-  czkawka_core/src/common/test_assets/test_heif_av1.avif  (heif AV1 runtime probe, via ffmpeg)
+  neuraldisk_core/src/common/test_assets/test_3x3.png        (baseline, always present)
+  neuraldisk_core/src/common/test_assets/test_3x3.avif       (libavif runtime probe)
+  neuraldisk_core/src/common/test_assets/test_3x3.heic       (heif HEVC runtime probe)
+  neuraldisk_core/src/common/test_assets/test_heif_av1.avif  (heif AV1 runtime probe, via ffmpeg)
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ except ImportError:
     sys.exit("pillow not installed - run: uv run --with pillow misc/gen_test_assets.py")
 
 REPO_ROOT = Path(__file__).parent.parent
-OUT_DIR = REPO_ROOT / "czkawka_core" / "src" / "common" / "test_assets"
+OUT_DIR = REPO_ROOT / "neuraldisk_core" / "src" / "common" / "test_assets"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 img = Image.new("RGB", (3, 3), color=(128, 64, 192))

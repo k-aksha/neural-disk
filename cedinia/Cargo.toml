@@ -4,10 +4,10 @@ version = "1.0.0"
 authors = ["Rafał Mikrut <mikrutrafal@protonmail.com>"]
 edition = "2024"
 rust-version = "1.94.1"
-description = "Android touch-friendly GUI for Czkawka Core - named after the Battle of Cedynia (972 AD)"
+description = "Android touch-friendly GUI for NeuralDisk Core - named after the Battle of Cedynia (972 AD)"
 license = "GPL-3.0-only"
-homepage = "https://github.com/qarmin/czkawka"
-repository = "https://github.com/qarmin/czkawka"
+homepage = "https://github.com/k-aksha/neural-disk"
+repository = "https://github.com/k-aksha/neural-disk"
 build = "build.rs"
 
 # Android requires a cdylib crate type
@@ -17,7 +17,7 @@ crate-type = ["cdylib", "rlib"]
 
 
 [dependencies]
-neuraldisk_core = { version = "1.0.0", path = "../czkawka_core" }
+neuraldisk_core = { version = "1.0.0", path = "../neuraldisk_core" }
 crossbeam-channel = "0.5"
 log = "0.4"
 humansize = "2.1"

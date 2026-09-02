@@ -7,7 +7,7 @@ in
 rec {
   default = neuraldisk-gui-wayland;
   neuraldisk-gui = let
-    cargoToml = "${self}/../../czkawka_gui/Cargo.toml";
+    cargoToml = "${self}/../../neuraldisk_gui/Cargo.toml";
     cargoTomlConfig = builtins.fromTOML (builtins.readFile cargoToml);
     version = cargoTomlConfig.package.version;
   in
@@ -26,7 +26,7 @@ rec {
     exec ${neuraldisk-gui}/bin/neuraldisk_gui "$@"
   '';
   neuraldisk-gui-wayland = let
-    cargoToml = "${self}/../../czkawka_gui/Cargo.toml";
+    cargoToml = "${self}/../../neuraldisk_gui/Cargo.toml";
     cargoTomlConfig = builtins.fromTOML (builtins.readFile cargoToml);
     version = cargoTomlConfig.package.version;
     waylandBuildInputs = buildInputs ++ [ pkgs.wayland ];
@@ -43,7 +43,7 @@ rec {
     };
   };
   neuraldisk-cli = let
-    cargoToml = "${self}/../../czkawka_cli/Cargo.toml";
+    cargoToml = "${self}/../../neuraldisk_cli/Cargo.toml";
     cargoTomlConfig = builtins.fromTOML (builtins.readFile cargoToml);
     version = cargoTomlConfig.package.version;
   in

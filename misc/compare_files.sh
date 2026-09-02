@@ -8,7 +8,7 @@ MD5_RELEASE_1=$(md5sum czkawka_cli_release_1 czkawka_gui_release_1 krokiet_relea
 MD5_RELEASE_2=$(md5sum czkawka_cli_release_2 czkawka_gui_release_2 krokiet_release_2 | awk '{print $1}' | paste -sd ",")
 
 # Print MD5 hashes
-echo "Printing CLI, GUI, and Krokiet MD5 hashes"
+echo "Printing CLI, GUI, and NeuralDisk MD5 hashes"
 echo ""
 echo "MD5_DEBUG_1: $MD5_DEBUG_1"
 echo "MD5_DEBUG_2: $MD5_DEBUG_2"
